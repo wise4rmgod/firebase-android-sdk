@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+<<<<<<< HEAD
  * Annotation used to mark a POJO property to be automatically populated with the document's ID when
  * the POJO is created from a Firestore document (e.g. via {@link DocumentSnapshot#toObject}).
  *
