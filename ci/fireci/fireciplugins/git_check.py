@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,25 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import fnmatch
+import click
+import contextlib
+import git
 import os
-from setuptools import find_packages, setup
+import re
 
-os.chdir(os.path.abspath(os.path.dirname(__file__)))
+from fireci import ci_command
 
-requires = []
 
-setup(
-    name='fireci',
-    version='0.1',
-    install_requires=[
-        'GitPython==3.0.3',
-        'PyGithub==1.43.8',
-        'click==7.0',
-        'google-cloud-monitoring==0.31.1',
-        'opencensus==0.2.0',
-    ],
-    packages=find_packages(exclude=['tests']),
-    entry_points={
-        'console_scripts': ['fireci = fireci.main:cli'],
-    },
+@click.option(
+    '--forbid-new-files',
+    '-n',
+    help='',
+    multiple=True,
+    required=True,
+    type=str,
 )
+@ci_command()
+def git_check(forbid_new_files):
+  print(forbid_new_files)
+  repo = git.Repo('.')
+  top = repo.commit(repo.head.log()[-1].newhexsha)
+  previous = repo.commit(repo.head.log()[-2].newhexsha)
+  print(top.diff(previous))
