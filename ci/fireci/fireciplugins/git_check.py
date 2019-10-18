@@ -12,12 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import fnmatch
 import click
-import contextlib
 import git
 import os
-import re
 
 from fireci import ci_command
 
@@ -25,15 +22,24 @@ from fireci import ci_command
 @click.option(
     '--forbid-new-files',
     '-n',
-    help='',
+    help='Checks if latest PR added files with specified extensions.',
     multiple=True,
     required=True,
     type=str,
 )
 @ci_command()
 def git_check(forbid_new_files):
-  print(forbid_new_files)
   repo = git.Repo('.')
   top = repo.commit(repo.head.log()[-1].newhexsha)
   previous = repo.commit(repo.head.log()[-2].newhexsha)
-  print(top.diff(previous))
+  diffs = previous.diff(top)
+
+  matching_added_files = [
+      x.a_path for x in previous.diff(top) if x.new_file and any(
+          ext
+          for ext in forbid_new_files if os.path.splitext(x.a_path)[1] == ext)
+  ]
+  if matching_added_files:
+    raise click.ClickException(
+        "Adding new groovy files is strongly discouraged, please use Java instead. Violating files:\n{}"
+        .format('\n'.join(matching_added_files)))

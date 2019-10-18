@@ -18,10 +18,8 @@ from . import commands
 from . import plugins
 from .internal import main
 
-logging.basicConfig(
-    format='%(name)s: [%(levelname)s] %(message)s',
-    level=logging.DEBUG,
-)
+logging.basicConfig(format='%(name)s: [%(levelname)s] %(message)s')
+logging.getLogger('fireci').setLevel(logging.DEBUG)
 
 plugins.discover()
 
