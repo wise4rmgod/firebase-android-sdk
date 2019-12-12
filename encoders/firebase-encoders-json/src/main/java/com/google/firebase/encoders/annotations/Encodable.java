@@ -46,10 +46,12 @@ import java.lang.annotation.Target;
 public @interface Encodable {
 
   /** Specifies a custom field name for a given property of a type. */
-  @Target(ElementType.METHOD)
-  @Retention(RetentionPolicy.CLASS)
+  @Target({ElementType.METHOD, ElementType.PARAMETER})
+  @Retention(RetentionPolicy.RUNTIME)
   @interface Field {
     String name() default "";
+
+    boolean inline() default false;
   }
 
   /** Indicates the code generator to ignore a given property of a type. */
